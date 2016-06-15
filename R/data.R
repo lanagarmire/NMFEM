@@ -16,12 +16,26 @@
 #'   indicates a pair of genes that have putative interations.
 'mppi'
 
-#' Log FPKM table of distal mouse lung epithelial cells from two developmental stages (E14.5 and E16.5)
+#' FPKM table of distal mouse lung epithelial cells from two developmental stages (E14.5 and E16.5)
 #'
 #' http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52583
 #'
 #' @format A matrix with rows being the genes sequenced and columns being the samples.
-'log_fpkm'
+'fpkm'
+
+#' Grouping vector of distal mouse lung epithelial cells from two developmental stages (E14.5 and E16.5)
+#'
+#' http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52583
+#'
+#' @format A vector indicating the E14.5 and E16.5 samples.
+'phe'
+
+#' Leading genes of distal mouse lung epithelial cells from two developmental stages (E14.5 and E16.5)
+#'
+#' http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52583
+#'
+#' @format A character vector of the 500 leading genes determined using D-score.
+'leading_genes'
 
 #' Phenotype vector for distal mouse lung epithelial cells dataset
 #'

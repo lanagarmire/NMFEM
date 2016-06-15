@@ -3,14 +3,16 @@
 \docType{data}
 \name{phe}
 \alias{phe}
-\title{Phenotype vector for distal mouse lung epithelial cells dataset}
-\format{A data frame with five variables: \code{year}, \code{sex},
-  \code{name}, \code{n} and \code{prop} (\code{n} divided by total number
-  of applicants in that year).}
+\title{Grouping vector of distal mouse lung epithelial cells from two developmental stages (E14.5 and E16.5)}
+\format{A vector indicating the E14.5 and E16.5 samples.}
 \usage{
+phe
+
 phe
 }
 \description{
+http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52583
+
 Phenotype vector for distal mouse lung epithelial cells dataset
 }
 \keyword{datasets}
