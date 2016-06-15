@@ -44,12 +44,13 @@ construct_weighted_graph_from_edge_list <-
 #' Generate communities using Spin Glass algorithm
 #' 
 #' @import igraph
-#' @import doMC
+#' @import doParallel
 #' @import foreach
 generate_spinglass_communities <-
   function(weighted_graph_, seed_genes_, 
            n_threads_ = 1, gamma_ = 0.5, min_size_ = 1, max_size_ = 100, verbose_level_ = 1, seed_=12345) {
-    registerDoMC(n_threads_)
+    cl <- makeCluster(n_threads_)
+    registerDoParallel(cl)
     
     if (verbose_level_ >= 2) message('num of threads for parallel computing = ', n_threads_)
     if (verbose_level_ >= 2) message('num of seed genes = ', length(seed_genes_))
@@ -101,6 +102,8 @@ generate_spinglass_communities <-
     if (verbose_level_ >= 2) message('num of modules = ', nrow(results$info))
     if (verbose_level_ >= 2) message('module seeds = ', paste(results$info$seed, collapse = ', '))
     
+    stopCluster(cl)
+    
     return(results)
   }
 
@@ -109,12 +112,13 @@ generate_spinglass_communities <-
 #' Do Monte Carlo simulation
 #' 
 #' @param gene_weights_ A numeric vector. Should be the same one the user supplied to \code{construct_weighted_graph}.
-#' @import doMC
+#' @import doParallel
 #' @import foreach
 get_monte_carlo_simulation_p_values <-
   function(module_graphs_, 
            n_monte_carlo_ = 1000, n_threads_ = 1, verbose_level_ = 1, seed_=12345) {
-    registerDoMC(n_threads_)
+    cl <- makeCluster(n_threads_)
+    registerDoParallel(cl)
     
     set.seed(seed_)
     
@@ -146,6 +150,8 @@ get_monte_carlo_simulation_p_values <-
     results$seed <- names(module_graphs_)
     results$p_values <- p_values
     results <- data.frame(results)
+    
+    stopCluster(cl)
     
     return(results)
   }
@@ -475,6 +481,8 @@ spinglass_procedure <-
 #' Plot module graph
 #' 
 #' @import ggplot2
+#' @import ggrepel
+#' @import dplyr
 #' @export
 plot_module_graph <- 
   function(
