@@ -18,10 +18,11 @@ Imports:
     tidyr,
     doParallel,
     foreach,
-    clusterProfiler,
+    clusterProfiler (== 3.0.2),
     org.Mm.eg.db,
     org.Hs.eg.db,
     AnnotationDbi,
+    GenomicRanges,
     igraph
 URL: https://github.com/lanagarmire/NMFEM
 BugReports: https://github.com/lanagarmire/NMFEM/issues

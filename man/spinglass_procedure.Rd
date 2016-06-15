@@ -56,4 +56,7 @@ default: 1.}
 \description{
 Generate modules from seed genes using Spinglass community detection method
 }
+\examples{
+res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads=50)
+}
 

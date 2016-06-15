@@ -239,6 +239,12 @@ KEGG_analysis <-
       
       if (verbose_level_ >= 2) message(sprintf('# use %s genes', organism_))
       
+      organism_code <- switch(organism_,
+        mouse = 'mmu',
+        human = 'hsa',
+        stop(sprintf('ERROR: organism_ "%s" not recognized.', organism_))
+      )
+      
       SYMBOL2EG <- switch(organism_,
         mouse = org.Mm.egSYMBOL2EG,
         human = org.Hs.egSYMBOL2EG,
@@ -258,14 +264,14 @@ KEGG_analysis <-
     }
       
     
-    ego <- enrichKEGG(gene          = selected_genes_,
-                      organism      = organism_,
-                      pvalueCutoff  = pvalueCutoff_,
-                      universe      = all_genes_,
-                      qvalueCutoff  = qvalueCutoff_, 
-                      readable      = TRUE)
-    
-    ego
+    # ego <- enrichKEGG(gene          = selected_genes_,
+    #                   organism      = organism_code,
+    #                   pvalueCutoff  = pvalueCutoff_,
+    #                   universe      = all_genes_,
+    #                   qvalueCutoff  = qvalueCutoff_, 
+    #                   readable      = TRUE)
+    # 
+    # ego
   }
 
 
@@ -304,6 +310,12 @@ GO_analysis <-
       
       if (verbose_level_ >= 2) message(sprintf('# use %s genes', organism_))
       
+      OrgDb <- switch(organism_,
+        mouse = 'org.Mm.eg.db',
+        human = 'org.Hs.eg.db',
+        stop(sprintf('ERROR: organism_ "%s" not recognized.', organism_))
+      )
+      
       SYMBOL2EG <- switch(organism_,
         mouse = org.Mm.egSYMBOL2EG,
         human = org.Hs.egSYMBOL2EG,
@@ -324,7 +336,7 @@ GO_analysis <-
       
     
     ego <- enrichGO(gene          = selected_genes_,
-                    organism      = organism_,
+                    OrgDb         = OrgDb,
                     ont           = ontology_,
                     pvalueCutoff  = pvalueCutoff_,
                     pAdjustMethod = "BH",
@@ -371,6 +383,8 @@ GO_analysis <-
 #' 
 #' @import dplyr
 #' @export
+#' @examples
+#' res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads=50)
 spinglass_procedure <-
   function(
            expr_matrix_,
@@ -451,8 +465,10 @@ spinglass_procedure <-
       if (verbose_level_ >= 1) message(sprintf('  - Module with seed gene "%s" (%d/%d) ...', seed, i, length(top_module_genelists_)))
       
       if (enrichment_analysis_ == 'GO') {
+        if (verbose_level_ >= 2) message("enrichment_analysis_ == 'GO'")
         enrichment_res <- GO_analysis(top_module_genelists_[[i]], genes, organism_, verbose_level_ = verbose_level_, ...) %>% summary
       } else if (enrichment_analysis_ == 'KEGG') {
+        if (verbose_level_ >= 2) message("enrichment_analysis_ == 'KEGG'")
         enrichment_res <- KEGG_analysis(top_module_genelists_[[i]], genes, organism_, verbose_level_ = verbose_level_, ...) %>% summary
       } else {
         stop(sprintf('ERROR: enrichment_analysis_ "%s" not recognized', enrichment_analysis_))
@@ -580,6 +596,8 @@ plot_module_graph <-
 #' @import tidyr
 #' @import dplyr
 #' @export
+#' @examples
+#' res <- nmf_subpopulation(fpkm)
 nmf_subpopulation <-
   function(
            expr_matrix_,

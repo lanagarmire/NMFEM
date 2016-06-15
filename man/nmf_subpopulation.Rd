@@ -50,4 +50,7 @@ A list with the following elements
 \description{
 Detect subpopulations using NMF
 }
+\examples{
+res <- nmf_subpopulation(fpkm)
+}
 
