@@ -1,0 +1,28 @@
+Package: NMFEM
+Version: 0.1.0
+Title: Non-negative Matrix Factorization analysis and module generation for
+    scRNA-Seq data
+Description: 
+Authors@R: c(
+    person("Xun", "Zhu", , "zhu2@hawaii.edu", c("aut", "cre", "cph"))
+    )
+License: GPL-2
+Depends:
+    R (>= 3.2.4)
+Imports:
+    limma,
+    dplyr,
+    ggplot2,
+    reshape2,
+    tidyr,
+    doMC,
+    foreach,
+    clusterProfiler,
+    org.Mm.eg.db,
+    org.Hs.eg.db,
+    AnnotationDbi,
+    igraph
+URL: https://github.com/lanagarmire/NMFEM
+BugReports: https://github.com/lanagarmire/NMFEM/issues
+LazyData: true
+RoxygenNote: 5.0.1
