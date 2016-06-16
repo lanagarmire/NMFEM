@@ -49,6 +49,8 @@ default: 1.}
 
 \item{enrichment_analysis_}{Either "GO" or "KEGG".}
 
+\item{gamma_}{Parameter for \code{igraph}'s \code{cluster_spinglass} function.}
+
 \item{seed_}{Random seed.}
 
 \item{...}{Additional parameters for \code{KEGG_analysis} or \code{GO_analysis}.}
@@ -57,6 +59,6 @@ default: 1.}
 Generate modules from seed genes using Spinglass community detection method
 }
 \examples{
-res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads=50)
+res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse')
 }
 

@@ -26,6 +26,10 @@ to avoid infinity. That is, \code{expr_matrix_ <- log(expr_matrix_+1)}. Default:
 
 \item{n_threads_, nrun_, method_, .options_, seed_}{Parameters for \code{nmf(...)}.
 Default values are supplied.}
+
+\item{method_}{Interative method for NMF. See the documentation of \code{NMF::nmf}.}
+
+\item{seed_}{Random seed.}
 }
 \value{
 A list with the following elements
@@ -51,6 +55,6 @@ A list with the following elements
 Detect subpopulations using NMF
 }
 \examples{
-res <- nmf_subpopulation(fpkm)
+res <- nmf_subpopulation(toy)
 }
 
