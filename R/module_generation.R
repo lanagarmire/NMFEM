@@ -403,6 +403,8 @@ spinglass_procedure <-
            seed_ = 12345,
            ...
            ) {
+    options(stringsAsFactors=F)
+    
     set.seed(seed_)
     
     output <- list()
@@ -610,6 +612,7 @@ nmf_subpopulation <-
            .options_=sprintf("p%dv%d", n_threads_, verbose_level_-1),
            seed_=12345
            ) {
+    options(stringsAsFactors=F)
     
     if (class(expr_matrix_) != 'matrix') stop('Error: expr_matrix_ has to be of class \'matrix\'. Stop.')
     

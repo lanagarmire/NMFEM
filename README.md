@@ -24,4 +24,4 @@ Example Code
 
     library(NMFEM)
     subp <- nmf_subpopulation(toy)
-    res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads=1, verbose_level_=2)
+    res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse')
