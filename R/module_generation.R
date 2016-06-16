@@ -377,14 +377,15 @@ GO_analysis <-
 #' @param n_threads_ Number of threads to use. Default: 1.
 #' @param min_size_ Module size lower cut-off. Default: 10.
 #' @param max_size_ Module size upper cut-off. Default: 100.
-#' @param seed_ Random seed.
 #' @param enrichment_analysis_ Either "GO" or "KEGG".
+#' @param gamma_ Parameter for \code{igraph}'s \code{cluster_spinglass} function.
+#' @param seed_ Random seed.
 #' @param ... Additional parameters for \code{KEGG_analysis} or \code{GO_analysis}.
 #' 
 #' @import dplyr
 #' @export
 #' @examples
-#' res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads=50)
+#' res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse')
 spinglass_procedure <-
   function(
            expr_matrix_,
@@ -574,6 +575,8 @@ plot_module_graph <-
 #' @param verbose_level_ How much information is printed. 0 = quiet, 1 = normal, 2 = with debug info, 3 = with extra debug info. Default: 1.
 #' @param n_threads_,nrun_,method_,.options_,seed_ Parameters for \code{nmf(...)}.
 #'   Default values are supplied.
+#' @param method_ Interative method for NMF. See the documentation of \code{NMF::nmf}.
+#' @param seed_ Random seed.
 #' @return A list with the following elements
 #'   \describe{
 #'     \item{\code{nmf_result}}{The \code{NMFfitX1} object returned by the \code{nmf} call.}
@@ -599,7 +602,7 @@ plot_module_graph <-
 #' @import dplyr
 #' @export
 #' @examples
-#' res <- nmf_subpopulation(fpkm)
+#' res <- nmf_subpopulation(toy)
 nmf_subpopulation <-
   function(
            expr_matrix_,
