@@ -8,7 +8,7 @@ Installation
 
     install.packages(c("dplyr", "ggplot2", "devtools", "igraph"))
     source("https://bioconductor.org/biocLite.R")
-    biocLite(c("topGO", "org.Mm.eg.db", "limma", "DESeq2"))
+    biocLite(c("topGO", "org.Mm.eg.db", "limma", "DESeq2", "clusterProfiler", "org.Hs.eg.db"))
     devtools::install_github('lanagarmire/NMFEM')
 
 Documentation
