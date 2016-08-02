@@ -53,8 +53,8 @@ generate_spinglass_communities <-
     registerDoParallel(cl)
     
     if (verbose_level_ >= 2) message('num of threads for parallel computing = ', n_threads_)
-    if (verbose_level_ >= 2) message('num of seed genes = ', length(seed_genes_))
-    
+    if (verbose_level_ >= 2) message(sprintf('seed_genes_ (length: %d) = %s', length(seed_genes_), paste(seed_genes_, collapse=', ')))
+
     set.seed(seed_)
     modules <- foreach(i = 1:length(seed_genes_)) %dopar% {
       module <- cluster_spinglass(weighted_graph_, 
@@ -422,7 +422,8 @@ spinglass_procedure <-
     
     genes <- intersect(genes, V(ppi)$name)  # 14865 -> 8247
     ppi <- induced_subgraph(ppi, genes)
-    ppi <- induced.subgraph(ppi, V(ppi)$name[clusters(ppi)$membership==1])  # 8247 -> 8174
+    largest_cluster <- data_frame(membership=clusters(ppi)$membership) %>% group_by(membership) %>% summarize(n=n()) %>% arrange(-n) %>% .$membership %>% .[1]
+    ppi <- induced.subgraph(ppi, V(ppi)$name[clusters(ppi)$membership==largest_cluster])
     
     output$ppi <- ppi
     
@@ -431,6 +432,11 @@ spinglass_procedure <-
     
     selected_genes_ <- intersect(selected_genes_, genes)
     
+    if (verbose_level_ >= 2) message(sprintf('genes = %s', paste(genes, collapse=', ')))
+    if (verbose_level_ >= 2) message(sprintf('ppi = '))
+    if (verbose_level_ >= 2) print(ppi)
+    if (verbose_level_ >= 2) message(sprintf('selected_genes_ (length: %d) = %s', length(selected_genes_), paste(selected_genes_, collapse=', ')))
+
     if (verbose_level_ >= 1) message('* Perform spinglass algorithm ...')
     spinglass_results <- generate_spinglass_communities(ppi, selected_genes_, 
                                                         min_size_ = min_size_, 
