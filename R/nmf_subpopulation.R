@@ -104,7 +104,8 @@ nmf_subpopulation <-
       t %>% as.data.frame %>% add_rownames('gene_name') %>%
       tbl_df %>% mutate(which_max=factor(which_max)) %>%
       arrange(-d_score) %>%
-      mutate(rank=row_number())
+      mutate(rank=row_number()) %>%
+      filter(gene_name != 'artificial')
     
     table(gene_info$which_max)
     d_score_frequency_plot <- ggplot() +
