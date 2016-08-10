@@ -229,8 +229,8 @@ KEGG_analysis <-
            gene_id_type_='symbol',
            ontology_='CC',
            verbose_level_=1,
-           pvalueCutoff_=0.01,
-           qvalueCutoff_=0.05
+           pvalueCutoff_=1,
+           qvalueCutoff_=1
            ) {
     if (verbose_level_ >= 2) message('# [GO_analysis] is called')
     
@@ -264,14 +264,14 @@ KEGG_analysis <-
     }
       
     
-    # ego <- enrichKEGG(gene          = selected_genes_,
-    #                   organism      = organism_code,
-    #                   pvalueCutoff  = pvalueCutoff_,
-    #                   universe      = all_genes_,
-    #                   qvalueCutoff  = qvalueCutoff_, 
-    #                   readable      = TRUE)
-    # 
-    # ego
+    enrich <- enrichKEGG(gene          = selected_genes_,
+                         organism      = organism_code,
+                         pvalueCutoff  = pvalueCutoff_,
+                         universe      = all_genes_,
+                         qvalueCutoff  = qvalueCutoff_, 
+                         readable      = TRUE)
+    
+    enrich
   }
 
 
