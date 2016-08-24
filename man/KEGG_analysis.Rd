@@ -6,7 +6,7 @@
 \usage{
 KEGG_analysis(selected_genes_, all_genes_, organism_,
   gene_id_type_ = "symbol", ontology_ = "CC", verbose_level_ = 1,
-  pvalueCutoff_ = 0.01, qvalueCutoff_ = 0.05)
+  pvalueCutoff_ = 1, qvalueCutoff_ = 1)
 }
 \arguments{
 \item{selected_genes_}{A character vector of genes, by default gene symbols. The ID type can be changed
