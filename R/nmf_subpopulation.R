@@ -37,6 +37,7 @@
 #' @import ggplot2
 #' @import reshape2
 #' @import tidyr
+#' @import tibble
 #' @import dplyr
 #' @export
 #' @examples
@@ -101,7 +102,7 @@ nmf_subpopulation <-
     }
     
     gene_info <- basis(ren) %>% apply(1, d_score_calc) %>%
-      t %>% as.data.frame %>% add_rownames('gene_name') %>%
+      t %>% as.data.frame %>% rownames_to_column('gene_name') %>%
       tbl_df %>% mutate(which_max=factor(which_max)) %>%
       arrange(-d_score) %>%
       mutate(rank=row_number()) %>%
