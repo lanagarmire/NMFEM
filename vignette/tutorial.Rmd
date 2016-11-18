@@ -1,0 +1,46 @@
+---
+title: "Use NMF to discover"
+author: "Xun Zhu"
+bibliography:
+  - 'tutorial.bib'
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Not an Introduction to knitr}
+output: knitr:::html_vignette
+---
+
+This simple tutorial will guide you through a typical analysis workflow with
+NMFEM pipeline.  At the end of this tutorial the reader should be able to
+do unsupervised clustering and important gene calling using non-negative matrix
+factorization, and important gene module calling using the spin-glass based algorithm
+FEM. Throughout the tutorial we will be using the mouse embryonic lung epithelial cell dataset
+[@treutlein2014reconstructing].
+
+Let's begin by loading the `NMFEM` package:
+
+```{r message=F, warning=F}
+library(NMFEM)
+```
+
+and loading the dataset attached in the package:
+
+```{r}
+data(fpkm)
+```
+
+the unsupervised clustering and important genes calling is nicely packed in a single function. If
+you are running this on a multi-core computer, feel free to set a higher `n_threads_` to take
+advantage of parallelism. Depending on your hardware this might take while so grab a cup of coffee
+while waiting for the results. :)
+
+```{r}
+nmf_results <- nmf_subpopulation(fpkm, n_threads_ = 30)
+```
+
+Okay. After running
+
+
+```{r}
+```
+
+## References
