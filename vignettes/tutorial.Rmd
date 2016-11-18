@@ -1,58 +1,106 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+title: "Use NMF to discover"
+author: "Xun Zhu"
+bibliography:
+  - 'tutorial.bib'
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Not an Introduction to knitr}
+output: knitr:::html_vignette
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+This simple tutorial will guide you through a typical analysis workflow with
+NMFEM pipeline.  At the end of this tutorial the reader should be able to
+do unsupervised clustering and important gene calling using non-negative matrix
+factorization, and important gene module calling using the spin-glass based algorithm
+FEM. Throughout the tutorial we will be using the mouse embryonic lung epithelial cell dataset
+[@treutlein2014reconstructing].
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+# Unsupervised Clustering and Important gene calling
 
-## Vignette Info
+Let's begin by loading the `NMFEM` package:
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r message=F, warning=F}
+library(NMFEM)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+and loading the dataset attached in the package:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r message=F, warning=F}
+data(fpkm)
 ```
 
-Also a quote using `>`:
+the unsupervised clustering and important genes calling is nicely packed in a single function. If
+you are running this on a multi-core computer, feel free to set a higher `n_threads_` to take
+advantage of parallelism. Depending on your hardware this might take while so grab a cup of coffee
+while waiting for the results. :)
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r message=F, warning=F}
+nmf_results <- nmf_subpopulation(fpkm, n_threads_ = 30)
+```
+
+The `nmf_results` contains various dataframes and ggplot objects for different aspect of the analysis.
+Let's take a look at a few important ones. We begin by looking at the clustering result:
+
+```{r message=F, warning=F}
+predict(nmf_results$nmf_result)
+```
+
+Then we can ask "what are the genes that provided the evidence for the separation of these two clusters?"
+
+```{r message=F, warning=F}
+nmf_results$gene_info
+```
+
+One way to understand the connection between the called clusters and the called important genes is that
+these two clusters express two distinct expression patterns. That is, some genes are expressed highly
+only in one cluster while some other genes are expressed highly only in the other cluster.
+
+Let's see what these two expression patterns are:
+
+```{r message=F, warning=F}
+nmf_results$coef_line_plot
+```
+
+We can also see the D-score distribution of these two patterns. This plot also gives you an
+idea the relative abundance of genes for each pattern.
+
+```{r message=F, warning=F}
+nmf_results$d_score_frequency_plot
+```
+
+There are also other interesting plots that allow various insights into the clusters, important genes,
+and expression patterns. We encourage the reader to explore by looking into its struture (it's just a list):
+
+```{r message=F, warning=F}
+str(nmf_results, max.level=1)
+```
+
+By the way, all the ggplot objects in the list have dataframe counter-parts for easy access of the underlying
+data. For example, `coef_line_dat` has the data for `coef_line_plot`:
+
+```{r message=F, warning=F}
+nmf_results$coef_line_dat
+```
+
+# Important Module generation
+
+Again, everything you need is nicely packed in the function `spinglass_procedure`:
+
+```{r message=F, warning=F}
+module_results <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads_ = 30)
+```
+
+We can view the module graphs by:
+
+```{r message=F, warning=F}
+module_results$graph_plot
+```
+
+A summary containing important information about these modules can be found using:
+
+```{r message=F, warning=F}
+module_results$final_tb
+```
+
+## References
