@@ -16,6 +16,8 @@ factorization, and important gene module calling using the spin-glass based algo
 FEM. Throughout the tutorial we will be using the mouse embryonic lung epithelial cell dataset
 [@treutlein2014reconstructing].
 
+# Unsupervised Clustering and Important gene calling
+
 Let's begin by loading the `NMFEM` package:
 
 ```{r message=F, warning=F}
@@ -24,7 +26,7 @@ library(NMFEM)
 
 and loading the dataset attached in the package:
 
-```{r}
+```{r message=F, warning=F}
 data(fpkm)
 ```
 
@@ -33,14 +35,72 @@ you are running this on a multi-core computer, feel free to set a higher `n_thre
 advantage of parallelism. Depending on your hardware this might take while so grab a cup of coffee
 while waiting for the results. :)
 
-```{r}
+```{r message=F, warning=F}
 nmf_results <- nmf_subpopulation(fpkm, n_threads_ = 30)
 ```
 
-Okay. After running
+The `nmf_results` contains various dataframes and ggplot objects for different aspect of the analysis.
+Let's take a look at a few important ones. We begin by looking at the clustering result:
 
+```{r message=F, warning=F}
+predict(nmf_results$nmf_result)
+```
 
-```{r}
+Then we can ask "what are the genes that provided the evidence for the separation of these two clusters?"
+
+```{r message=F, warning=F}
+nmf_results$gene_info
+```
+
+One way to understand the connection between the called clusters and the called important genes is that
+these two clusters express two distinct expression patterns. That is, some genes are expressed highly
+only in one cluster while some other genes are expressed highly only in the other cluster.
+
+Let's see what these two expression patterns are:
+
+```{r message=F, warning=F}
+nmf_results$coef_line_plot
+```
+
+We can also see the D-score distribution of these two patterns. This plot also gives you an
+idea the relative abundance of genes for each pattern.
+
+```{r message=F, warning=F}
+nmf_results$d_score_frequency_plot
+```
+
+There are also other interesting plots that allow various insights into the clusters, important genes,
+and expression patterns. We encourage the reader to explore by looking into its struture (it's just a list):
+
+```{r message=F, warning=F}
+str(nmf_results, max.level=1)
+```
+
+By the way, all the ggplot objects in the list have dataframe counter-parts for easy access of the underlying
+data. For example, `coef_line_dat` has the data for `coef_line_plot`:
+
+```{r message=F, warning=F}
+nmf_results$coef_line_dat
+```
+
+# Important Module generation
+
+Again, everything you need is nicely packed in the function `spinglass_procedure`:
+
+```{r message=F, warning=F}
+module_results <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse', n_threads_ = 30)
+```
+
+We can view the module graphs by:
+
+```{r message=F, warning=F}
+module_results$graph_plot
+```
+
+A summary containing important information about these modules can be found using:
+
+```{r message=F, warning=F}
+module_results$final_tb
 ```
 
 ## References
