@@ -25,3 +25,8 @@ Example Code
     library(NMFEM)
     subp <- nmf_subpopulation(toy)
     res <- spinglass_procedure(fpkm, phe, leading_genes, mppi, 'mouse')
+
+Tutorial
+--------
+
+A simple tutorial can be found [here](http://garmiregroup.org/nmfem).
