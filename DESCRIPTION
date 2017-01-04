@@ -18,7 +18,7 @@ Imports:
     tidyr,
     doParallel,
     foreach,
-    clusterProfiler (== 3.0.2),
+    clusterProfiler,
     org.Mm.eg.db,
     org.Hs.eg.db,
     AnnotationDbi,
