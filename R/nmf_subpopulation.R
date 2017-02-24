@@ -1,4 +1,4 @@
-#' Detect subpopulations using NMF
+#' Detect subpopulations using NMF (k=2 only, for pseudo-timeline construction)
 
 #' @param expr_matrix_ The expression matrix, each row is a gene and each
 #'   column is a sample. The row names should be gene symbols and the column
@@ -45,6 +45,7 @@
 nmf_subpopulation <-
   function(
            expr_matrix_,
+            n_subpop_=2,
            log_transformation_=T,
            verbose_level_=1,
            n_threads_=1,
@@ -83,7 +84,7 @@ nmf_subpopulation <-
 #   -----------------------------------------------------------------------
         
     if (verbose_level_ >= 1) message('* Call nmf function ...')
-    ren <- nmf(rwl, rank=2, nrun=nrun_, method=method_, .options=.options_, seed=seed_)
+    ren <- nmf(rwl, rank=n_subpop_, nrun=nrun_, method=method_, .options=.options_, seed=seed_)
     output$nmf_result <- ren
     
 #   -----------------------------------------------------------------------
@@ -112,8 +113,8 @@ nmf_subpopulation <-
     d_score_frequency_plot <- ggplot() +
       geom_density(aes(x=d_score, color=which_max, fill=which_max), gene_info, alpha=0.3, stat='bin') +
       scale_x_log10() +
-      scale_fill_manual(name='Expr. Pattern', values=c('blue', 'red', 'green')) +
-      scale_color_manual(name='Expr. Pattern', values=c('blue', 'red', 'green')) +
+      scale_fill_manual(name='Expr. Pattern', values=c('blue', 'red', 'green', '#D00000', '#DB9006', '#3F88C5', '#032B43', '#136F63')) +
+      scale_color_manual(name='Expr. Pattern', values=c('blue', 'red', 'green', '#D00000', '#DB9006', '#3F88C5', '#032B43', '#136F63')) +
       theme(plot.margin=rep(unit(0.2, 'inches'), 4)) +
       labs(x='D-score', y='Frequency')
     
@@ -137,69 +138,12 @@ nmf_subpopulation <-
     coef_line_plot <- ggplot() +
       geom_line(aes(x=sample, group=factor(coef), color=factor(coef), y=value), dat_coef_line) +
       geom_point(aes(x=sample, group=factor(coef), color=factor(coef), y=value), dat_coef_line) +
-      scale_color_manual(name='Expr. Pattern', values=c('blue', 'red', 'green')) +
+      scale_color_manual(name='Expr. Pattern', values=c('blue', 'red', 'green', '#D00000', '#DB9006', '#3F88C5', '#032B43', '#136F63')) +
       theme(axis.text.x=element_text(angle=90, vjust=0.5), plot.margin=rep(unit(0.2, 'inches'), 4)) +
       labs(x='samples sorted by pseudo-timeline', y='log expr. lvl.')
     
     output$coef_line_dat <- dat_coef_line
     output$coef_line_plot <- coef_line_plot
-    
-#   -----------------------------------------------------------------------
-    
-    if (verbose_level_ >= 1) message('* Plot the trend paths on MDS and PCA ...')
-    
-    mdsr <- cmdscale(1-cor(rwl))
-    pr <- prcomp(t(rwl))
-    
-    dat_pca <- dat_coef_line %>%
-      mutate(sample=factor(sample, ordered_sample_ids)) %>%
-      spread(coef, value) %>%
-      mutate(difference=`1`-`2`) %>%
-      mutate(blend=`1`/(`1`+`2`)) %>%
-      mutate(pc1=pr$x[as.character(sample),1]) %>%
-      mutate(pc2=pr$x[as.character(sample),2]) %>%
-      mutate(mds1=mdsr[as.character(sample),1]) %>%
-      mutate(mds2=mdsr[as.character(sample),2])
-    
-    if (verbose_level_ >= 2) message('dat_pca = ')
-    if (verbose_level_ >= 2) print(dat_pca, 20)
-    
-    dat_seg <- dat_pca %>%
-      mutate(order=row_number()) %>%
-      mutate(prev_blend=lag(blend)) %>%
-      mutate(avg_blend=(blend + prev_blend)/2) %>%
-      mutate(prev_sample=lag(sample)) %>%
-      mutate(prev_difference=lag(difference)) %>%
-      mutate(prev_pc1=lag(pc1)) %>%
-      mutate(prev_pc2=lag(pc2)) %>%
-      mutate(prev_mds1=lag(mds1)) %>%
-      mutate(prev_mds2=lag(mds2)) %>%
-      mutate(jump=difference - prev_difference)
-    
-    if (verbose_level_ >= 2) message('dat_seg = ')
-    if (verbose_level_ >= 2) print(dat_seg, 20)
-    
-    output$path_dat <- dat_seg
-    
-    pca_path_plot <- ggplot() +
-      geom_segment(aes(x=prev_pc1, y=prev_pc2, xend=pc1, yend=pc2, size=jump, alpha=jump, color=avg_blend), dat_seg) +
-      geom_point(aes(x=pc1, y=pc2), dat_pca) +
-      scale_color_gradientn(name='precentage\nof the blue\ncomponent', colors=c('red', 'blue')) +
-      scale_alpha_continuous(name='Jump', range=c(0.1,0.6)) +
-      scale_size_continuous(name='Jump', range=c(0.5,2)) +
-      labs(x='PC1', y='PC2')
-    
-    output$pca_path_plot <- pca_path_plot
-    
-    mds_path_plot <- ggplot() +
-      geom_segment(aes(x=prev_mds1, y=prev_mds2, xend=mds1, yend=mds2, size=jump, alpha=jump, color=avg_blend), dat_seg) +
-      geom_point(aes(x=mds1, y=mds2), dat_pca) +
-      scale_color_gradientn(name='precentage\nof the blue\ncomponent', colors=c('red', 'blue')) +
-      scale_alpha_continuous(name='Jump', range=c(0.1,0.6)) +
-      scale_size_continuous(name='Jump', range=c(0.5,2)) +
-      labs(x='MDS1', y='MDS2')
-    
-    output$mds_path_plot <- mds_path_plot
     
 #   -----------------------------------------------------------------------
 
@@ -227,7 +171,7 @@ nmf_subpopulation <-
     
     top_genes_free_y_plot <- ggplot() +
       geom_bar(aes(x=sample, y=log_expr, fill=which_max), top_genes_dat, stat='identity') +
-      scale_fill_manual(values=c('blue', 'red', 'green')) +
+      scale_fill_manual(values=c('blue', 'red', 'green', '#D00000', '#DB9006', '#3F88C5', '#032B43', '#136F63')) +
       facet_wrap(~ gene_name, labeller=gglabeller, scales='free') +
       theme(axis.text.x=element_text(angle=90, vjust=0.5)) +
       theme(strip.text=element_text(size=top_genes_facet_title_font_size_), panel.margin = unit(2, "lines"), legend.position='none')
@@ -236,7 +180,7 @@ nmf_subpopulation <-
     
     top_genes_fixed <- ggplot() +
       geom_bar(aes(x=sample, y=log_expr, fill=which_max), top_genes_dat, stat='identity') +
-      scale_fill_manual(values=c('blue', 'red', 'green')) +
+      scale_fill_manual(values=c('blue', 'red', 'green', '#D00000', '#DB9006', '#3F88C5', '#032B43', '#136F63')) +
       facet_wrap(~ gene_name, labeller=gglabeller) +
       theme(axis.text.x=element_text(angle=90, vjust=0.5)) +
       theme(strip.text=element_text(size=top_genes_facet_title_font_size_), panel.margin = unit(2, "lines"), legend.position='none')
