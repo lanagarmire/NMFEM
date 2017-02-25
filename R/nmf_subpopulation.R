@@ -7,6 +7,7 @@
 #'   for human genes, all letters are capitalized (e.g. TP53). The values will
 #'   be log-transformed by default, this can be changed using the
 #'   \code{log_transofrmation_} option.
+#' @param n_subpop_ The number of expected subpopulations. Default: 2.
 #' @param log_transformation_ Whether to log-transform the expression matrix.
 #'   A pseudo count \code{1} will be added to each value before log transformation
 #'   to avoid infinity. That is, \code{expr_matrix_ <- log(expr_matrix_+1)}. Default: \code{True}.
@@ -45,7 +46,7 @@
 nmf_subpopulation <-
   function(
            expr_matrix_,
-            n_subpop_=2,
+           n_subpop_=2,
            log_transformation_=T,
            verbose_level_=1,
            n_threads_=1,
