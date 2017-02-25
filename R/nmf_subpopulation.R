@@ -1,4 +1,4 @@
-#' Detect subpopulations using NMF (k=2 only, for pseudo-timeline construction)
+#' Detect subpopulations using NMF
 
 #' @param expr_matrix_ The expression matrix, each row is a gene and each
 #'   column is a sample. The row names should be gene symbols and the column
