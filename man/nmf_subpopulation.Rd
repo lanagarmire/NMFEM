@@ -4,13 +4,13 @@
 \alias{nmf_subpopulation}
 \title{Detect subpopulations using NMF}
 \usage{
-nmf_subpopulation(expr_matrix_, log_transformation_ = T, verbose_level_ = 1,
-  n_threads_ = 1, nrun_ = 30, method_ = "brunet",
+nmf_subpopulation(expr_matrix_, n_subpop_ = 2, log_transformation_ = T,
+  verbose_level_ = 1, n_threads_ = 1, nrun_ = 30, method_ = "brunet",
   top_genes_facet_title_font_size_ = 24, .options_ = sprintf("p\%dv\%d",
   n_threads_, verbose_level_ - 1), seed_ = 12345)
 
-nmf_subpopulation(expr_matrix_, log_transformation_ = T, verbose_level_ = 1,
-  n_threads_ = 1, nrun_ = 30, method_ = "brunet",
+nmf_subpopulation(expr_matrix_, n_subpop_ = 2, log_transformation_ = T,
+  verbose_level_ = 1, n_threads_ = 1, nrun_ = 30, method_ = "brunet",
   top_genes_facet_title_font_size_ = 24, .options_ = sprintf("p\%dv\%d",
   n_threads_, verbose_level_ - 1), seed_ = 12345)
 }
@@ -22,6 +22,8 @@ symbols. For mouse genes,only the first letter is capitalized (e.g. Tp53);
 for human genes, all letters are capitalized (e.g. TP53). The values will
 be log-transformed by default, this can be changed using the
 \code{log_transofrmation_} option.}
+
+\item{n_subpop_}{The number of expected subpopulations. Default: 2.}
 
 \item{log_transformation_}{Whether to log-transform the expression matrix.
 A pseudo count \code{1} will be added to each value before log transformation
@@ -95,7 +97,7 @@ A list with the following elements
 \description{
 Detect subpopulations using NMF
 
-Detect subpopulations using NMF
+Detect subpopulations using NMF (k=2 only, for pseudo-timeline construction)
 }
 \examples{
 res <- nmf_subpopulation(fpkm)
